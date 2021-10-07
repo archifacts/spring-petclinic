@@ -189,6 +189,10 @@
               </additionalProperties>
             </configuration>
           </execution>
+          <execution>
+            <id>repackage</id>
+            <classifier>layered</classifier>
+          </execution>
         </executions>
       </plugin>
       <plugin>
