@@ -22,12 +22,15 @@ jobs:
         java-version: '11'
         distribution: 'adopt'
         server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
-        settings-path: ${{ github.workspace }} # location for the settings.xml file
 
-    - name: Build with Maven
-      run: mvn -B package --file pom.xml
+    - name: Cache Maven
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2
 
-    - name: Publish to GitHub Packages Apache Maven
-      run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml -DaltDeploymentRepository=github::default::https://maven.pkg.github.com/Archifacts/spring-petclinic
+    - name: Build with Maven and Publish to GitHub Packages
+      run: mvn --batch-mode --update-snapshots deploy -DaltDeploymentRepository=github::default::https://maven.pkg.github.com/Archifacts/spring-petclinic
       env:
-        GITHUB_TOKEN: ${{ github.token }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
